@@ -74,7 +74,7 @@ exp(-2*log(2)*(t-t0)^2/τG^2)
 ψ_w = onephoton(bw,ξ,τG,t0)
 
 ψ = OnePhotonAndTLS(tls_site, wg_sites, OnePhotonView(ψ_w))
-# 3. Time Evolution Loop
+#Time Evolution Loop
 for k in 1:(length(wg_sites))
     
     s_tls = siteind(ψ, k)
