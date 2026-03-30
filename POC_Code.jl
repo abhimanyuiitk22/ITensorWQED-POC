@@ -90,20 +90,9 @@ time_axis = times[1:length(photon_probs)]
 input_view = OnePhotonView(ψ_w)
 input_probs = [abs2(input_view[n]/(dt)^0.5) for n in 1:length(input_view)]
 
-p1 = plot(time_axis, input_probs,
-    title="Input vs Scattered Pulse from MPS Simulation",
-    xlabel="Time (t)", 
-    ylabel="Probability |ξ(t)|²",
-    label="Input Pulse",
-    lw=2,
-    color=:red,
-    ls=:dash)
+p1 = plot(time_axis, input_probs)
 
-plot!(p1, time_axis, photon_probs,
-    label="Scattered Pulse",
-    lw=1,
-    color=:blue,
-    fill=(0, 0.2, :blue))
+plot!(p1, time_axis, photon_probs)
 
 savefig(p1, joinpath(@__DIR__, "input_vs_scattered_pulse.png"))
 display(p1)
