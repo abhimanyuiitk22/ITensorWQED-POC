@@ -18,9 +18,6 @@ sd = create(be)
 γ = 1.0
 H = im*sqrt(γ/dt)*(sd ⊗ w - s ⊗ wd)
 
-
-
-#TLS+onephoton to MPS 
 function OnePhotonAndTLS(tls_site, wg_sites, view)
     N_wg = length(wg_sites)
     
@@ -65,8 +62,6 @@ end
 tls_site = siteind("S=1/2")
 wg_sites = siteinds("S=1/2", length(times))
 
-
-
 ξ(t,τG,t0) = sqrt(2/τG)*(log(2)/pi)^(1/4)*
 exp(-2*log(2)*(t-t0)^2/τG^2)
 τG,t0 = 1,5
@@ -74,31 +69,19 @@ exp(-2*log(2)*(t-t0)^2/τG^2)
 ψ_w = onephoton(bw,ξ,τG,t0)
 
 ψ = OnePhotonAndTLS(tls_site, wg_sites, OnePhotonView(ψ_w))
-#Time Evolution Loop
 for k in 1:(length(wg_sites))
-    
     s_tls = siteind(ψ, k)
     s_bin = siteind(ψ, k+1)
     T_s,T_sd   = ITensors.op("S+", s_tls), ITensors.op("S-", s_tls)
     T_w,T_wd   = ITensors.op("S+", s_bin), ITensors.op("S-", s_bin)  
     H_local =  sqrt(γ/dt) * (T_sd * T_w - T_s * T_wd)
     U_gate  = exp(H_local * dt)
-
-  
     two_site_tensor = ψ[k] * ψ[k+1]
-    
-   
     acted_tensor = noprime(U_gate * two_site_tensor)
-    
-    
-    left_inds = (k == 1) ? [s_bin] : [linkind(ψ, k-1), s_bin]
-    
+    left_inds = (k == 1) ? [s_bin] : [linkind(ψ, k-1), s_bin]    
     U, S, V = svd(acted_tensor, left_inds; lefttags="Link,l=$k")
-    
     ψ[k] = U
     ψ[k+1] = S * V
-    
-   
 end
 
 photon_probs = ITensorMPS.expect(ψ, "ProjDn"; site_range=1:(length(ψ)-1))/(dt)
